@@ -1,0 +1,6 @@
+{ 
+    "osim_path": "/opensim_install/bin/",
+    "ik_filter": 15,
+    "AnalogFrameRate": 1000,
+    "VideoFrameRate": 100
+}
