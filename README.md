@@ -12,8 +12,9 @@ Step 2: Do all the different steps in OpenSim and save your scaled model in the 
 			- Externalloads file: ExternalLoads.xml
 			- SO setup: SO_generic.xml
 			- Joint contact forces analyses: JRA_generic.xml
-Step 3: run the matlab code Run_all.m 
-Step 4: Install the reporting app by double clicking on the Patients Display (Matlab App Installer). After installation, you should be able to see the app in matlab in the tab "app"
-Step 5: Run the reporting app and import your own data. 
+Step 3: Adapt the params.json file with a text editor. The "osim_path" should refer to intallation folder of your OpenSim. The other lines should be adapted to the information of your project. 
+Step 4: run the matlab code Run_all.m 
+Step 5: Install the reporting app by double clicking on the Patients Display (Matlab App Installer). After installation, you should be able to see the app in matlab in the tab "app"
+Step 6: Run the reporting app and import your own data. 
 
  
