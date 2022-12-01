@@ -1,5 +1,5 @@
 %% Summarize(information about the subject (folder stored,...), Joint contact forces file)
-function Summarize(params,input_file,subject)
+function Summarize(params,input_file,subject,mainpath)
 
 addpath(genpath(fullfile(cd,'GenericSetup')))
 addpath(genpath(fullfile(cd,'SubFunctions')))
