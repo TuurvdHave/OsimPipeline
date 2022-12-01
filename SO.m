@@ -78,4 +78,3 @@ trailname = temp(1:end-18);
             system(full_command);
           
         disp('SO done')
-quit

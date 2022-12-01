@@ -82,4 +82,3 @@ trailname = temp(1:end-29);
             system(full_command);
        
         disp('JRF done')      
-quit
