@@ -124,10 +124,10 @@ else
             
             commando = [fullfile(setup,[trailname '.xml' ])];%'" > "' fullfile(output_kin,'log',[trailname '.log"'])]; commando = strrep(commando,'\','/');
             
-            if contains(Opensim_path,'3.')
+            if contains(OpenSim_path,'3.')
             exe_path=[ KS3_path  'ks.exe'];
             full_command = [exe_path ' -S  ' commando];
-           elseif contains(Opensim_path,'4.') 
+           elseif contains(OpenSim_path,'4.') 
             exe_path=[ KS4_path  'ks.exe'];
             full_command = [exe_path ' -S  ' commando];
            end 

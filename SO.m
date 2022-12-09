@@ -20,7 +20,7 @@ disp(data)
 
 main_path       = mainpath; 
 OpenSim_path    = data.osim_path; 
-Generic_files   = [data.main_path '/GenericSetup'];
+Generic_files   = [main_path '/GenericSetup'];
 Subject         = char(subject);
 
 ik_filter       = data.ik_filter; 

@@ -7,7 +7,7 @@ SO(params,input_file,subject,mainpath)
 
 addpath(genpath(fullfile(cd,'GenericSetup')))
 addpath(genpath(fullfile(cd,'SubFunctions')))
-addpath(genpath(fullfile(cd,'MuscleRedundancySolver-master'))))
+addpath(genpath(fullfile(cd,'MuscleRedundancySolver-master')))
 %% 
 disp('Loading params file')
 fid = fopen(params); 
@@ -24,7 +24,7 @@ disp(data)
 
 main_path       = mainpath; 
 OpenSim_path    = data.osim_path; 
-Generic_files   = [data.main_path '/GenericSetup'];
+Generic_files   = [main_path '/GenericSetup'];
 Subject         = char(subject);
 
 ik_filter       = data.ik_filter; 
@@ -93,8 +93,8 @@ trailname = temp(1:end-18);
             %                 'gasmed_r',20};
             Misc.Mesh_Frequency = 100;
             Misc.f_cutoff_ID = ik_filter;
-            Misc.Out_Path = output_so;
-            Misc.filename = trialname;
+            Misc.OutPath = output_so;
+            Misc.filename = trailname;
             
             [Results,DatStore,Misc] = solveMuscleRedundancy(time,Misc);
             
