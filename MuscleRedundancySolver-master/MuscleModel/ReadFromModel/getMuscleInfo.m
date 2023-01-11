@@ -68,7 +68,7 @@ for t = 1:Misc.nTrials
     Inds_deleteDOFS(ct:end)=[];
     DOF_inds(Inds_deleteDOFS)=[];
     Misc.DofNames{t}=Misc.DofNames_muscles{t}; Misc.DofNames{t}(Inds_deleteDOFS)=[];
-
+    DOF_inds(isnan(DOF_inds)) = [];
     % warnings when not all the input DOFS are actuated by muscles
     for i=1:length(Misc.DofNames_Input{t})
         if ~any(strcmp(Misc.DofNames_Input{t}{i},Misc.DofNames{t}))

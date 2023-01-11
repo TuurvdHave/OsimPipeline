@@ -2,7 +2,7 @@
 function DO(params,input_file,subject,mainpath)
 
 %% first the SO has to run before you can run the DO 
-SO(params,input_file,subject,mainpath)
+%SO(params,input_file,subject,mainpath)
 %% 
 
 addpath(genpath(fullfile(cd,'GenericSetup')))
@@ -122,8 +122,8 @@ trailname = temp(1:end-18);
                 missing = length(Results.Time.genericMRS)-size(Results.RActivation.genericMRS,2);
                 Results.RActivation.genericMRS = [Results.RActivation.genericMRS,ones(size(Results.RActivation.genericMRS,1),missing).*NaN];
             end
-            for m =  1:size(Misc.DofNames_Input{1,1},2)
-                ind =find(strcmp(Misc.DofNames_Input{1,1}{m},names));%'_reserve'
+            for m =  1:size(Misc.DofNames_Input{},2)
+                ind =find(strcmp(Misc.DofNames_Input{m},names));%'_reserve'
                 %             data(1:endind,ind) = Results.RActivation.genericMRS(m,:)';
                 data(startind:endind,ind) = interp1(Results.Time.genericMRS,Results.RActivation.genericMRS(m,:)',data(startind:endind,1));
             end

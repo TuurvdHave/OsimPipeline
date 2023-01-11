@@ -12,7 +12,7 @@ str = char(raw');
 fclose(fid); 
 data = jsondecode(str);
 disp('Loaded parameters')
-disp(data)
+disp(data);
 
 
 %% Define input
@@ -20,7 +20,7 @@ disp(data)
 
 main_path       = mainpath; 
 OpenSim_path    = data.osim_path; 
-Generic_files   = 'GenericSetup';
+Generic_files   = [mainpath,'\GenericSetup'];
 Subject         = char(subject); 
 KS3_path        = data.ks3x;
 KS4_path        = data.ks4x;
@@ -84,10 +84,10 @@ for file = 3:2:nfiles-1
              commando = fullfile(setup,[trailname Side num2str((file-1)/2) '.xml' ]); % '" > "' fullfile(output_kin,'log',[trailname Side num2str((file-1)/2) '.log"'])];
             
            % exe_path=[OpenSim_path 'ik.exe'];
-           if contains(Opensim_path,'3.')
+           if contains(OpenSim_path,'3.')
             exe_path=[ KS3_path  'ks.exe'];
             full_command = [exe_path ' -S  ' commando];
-           elseif contains(Opensim_path,'4.') 
+           elseif contains(OpenSim_path,'4.') 
             exe_path=[ KS4_path  'ks.exe'];
             full_command = [exe_path ' -S  ' commando];
            end 

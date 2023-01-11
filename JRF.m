@@ -12,7 +12,7 @@ str = char(raw');
 fclose(fid); 
 data = jsondecode(str);
 disp('Loaded parameters')
-disp(data)
+disp(data);
 
 
 %% Define input
@@ -20,7 +20,7 @@ disp(data)
 
 main_path       = mainpath; 
 OpenSim_path    = data.osim_path; 
-Generic_files   = [data.main_path '/GenericSetup'];
+Generic_files   = [mainpath,'\GenericSetup'];
 Subject         = char(subject);
 
 ik_filter       = data.ik_filter; 
@@ -69,15 +69,20 @@ trailname = temp(1:end-29);
             JRF_setup.AnalyzeTool.AnalysisSet.objects.JointReaction.start_time =[string(SetupSO.AnalyzeTool.initial_time)];
             JRF_setup.AnalyzeTool.AnalysisSet.objects.JointReaction.end_time = [string(SetupSO.AnalyzeTool.final_time)];
             JRF_setup.AnalyzeTool.AnalysisSet.objects.JointReaction.forces_file = (char(strcat(SetupSO.AnalyzeTool.results_directory,'/',trailname,'_StaticOptimization_force.sto'))); 
-            JRF_setup.AnalyzeTool.force_set_files = strcat(Generic_files, '/DC_MW_musc_Strong_actuators.xml');
+            JRF_setup.AnalyzeTool.force_set_files = strcat(Generic_files, '/Reserve_actuators.xml');
             JRF_setup.AnalyzeTool.ATTRIBUTE.name = [(char(strcat(trailname)))];
 
             xml_write([setupjrl,'/',[trailname '.xml' ]], JRF_setup, 'OpenSimDocument');
             
             commando = [fullfile(setupjrl,[trailname '.xml' ])];% '" > "' fullfile(output_jrl,'log',[trailname '.log"'])] ; commando = strrep(commando,'\','/');
             
-            exe_path=[OpenSim_path 'opensim-cmd'];
-            full_command = [exe_path ' run-tool ' commando];
+            if contains(OpenSim_path,'3.')
+            exe_path=[OpenSim_path 'analyze.exe'];
+            full_command = [exe_path ' -S  ' commando];
+           elseif contains(OpenSim_path,'4.') 
+            exe_path=[OpenSim_path 'opensim-cmd.exe'];
+            full_command = [exe_path ' run-tool  ' commando];
+           end 
 
             system(full_command);
        

@@ -12,7 +12,7 @@ str = char(raw');
 fclose(fid); 
 data = jsondecode(str);
 disp('Loaded parameters')
-disp(data)
+disp(data);
 
 
 %% Define input
@@ -20,7 +20,7 @@ disp(data)
 
 main_path       = mainpath; 
 OpenSim_path    = data.osim_path; 
-Generic_files   = 'GenericSetup';
+Generic_files   = [mainpath,'\GenericSetup'];
 Subject         = char(subject); 
 
 ik_filter       = data.ik_filter; 
@@ -81,12 +81,14 @@ for file = 3:2:nfiles-1
             
              commando = fullfile(setup,[trailname Side num2str((file-1)/2) '.xml' ]); % '" > "' fullfile(output_kin,'log',[trailname Side num2str((file-1)/2) '.log"'])];
             
-           % exe_path=[OpenSim_path 'ik.exe'];
+           if contains(OpenSim_path,'3.')
+            exe_path=[OpenSim_path 'ik.exe'];
+            full_command = [exe_path ' -S  ' commando];
+           elseif contains(OpenSim_path,'4.') 
             exe_path=[OpenSim_path 'opensim-cmd.exe'];
             full_command = [exe_path ' run-tool  ' commando];
-
-
-            system(full_command);
+           end 
+           
             system(full_command);
             
             disp('IK done')
@@ -119,8 +121,13 @@ else
             
             commando = [fullfile(setup,[trailname '.xml' ])];%'" > "' fullfile(output_kin,'log',[trailname '.log"'])]; commando = strrep(commando,'\','/');
             
+            if contains(OpenSim_path,'3.')
+            exe_path=[OpenSim_path 'ik.exe'];
+            full_command = [exe_path ' -S  ' commando];
+           elseif contains(OpenSim_path,'4.') 
             exe_path=[OpenSim_path 'opensim-cmd.exe'];
             full_command = [exe_path ' run-tool  ' commando];
+           end 
 
             system(full_command);
             

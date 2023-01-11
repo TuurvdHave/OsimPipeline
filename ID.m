@@ -12,7 +12,7 @@ str = char(raw');
 fclose(fid); 
 data = jsondecode(str);
 disp('Loaded parameters')
-disp(data)
+disp(data);
 
 
 %% Define input
@@ -20,7 +20,7 @@ disp(data)
 
 main_path       = mainpath; 
 OpenSim_path    = data.osim_path; 
-Generic_files   = 'GenericSetup';
+Generic_files   = [mainpath,'\GenericSetup'];
 Subject         = char(subject); 
 
 ik_filter       = data.ik_filter; 
@@ -108,10 +108,15 @@ trailname = temp(1:end-4);
                   ID_setup.InverseDynamicsTool.external_loads_file = (char(fullfile(dir_el,[trailname  '_ExternalLoads.xml']))); 
                   xml_write([setupid,'\',[trailname '.xml' ]], ID_setup, 'OpenSimDocument');
   
-            commando = [fullfile(setupid,[trailname '.xml' ]) '" > "' fullfile(output_dyn,'log',[trailname '.log"'])]; commando = strrep(commando,'\','/');
+            commando = [fullfile(setupid,[trailname '.xml' ])];% '" > "' fullfile(output_dyn,'log',[trailname '.log"'])]; commando = strrep(commando,'\','/');
             
+            if contains(OpenSim_path,'3.')
             exe_path=[OpenSim_path 'id.exe'];
-            full_command = [exe_path ' -S "'  commando];
+            full_command = [exe_path ' -S  ' commando];
+           elseif contains(OpenSim_path,'4.') 
+            exe_path=[OpenSim_path 'opensim-cmd.exe'];
+            full_command = [exe_path ' run-tool  ' commando];
+           end 
             system(full_command);
             
             disp('ID done')

@@ -19,5 +19,9 @@ If you are running dynamic optimization (muscle redundancy solver) (make sure th
 make sure you check https://github.com/KULeuvenNeuromechanics/MuscleRedundancySolver. Everthing is documented there. <br>
 Step 5: Install the reporting app by double clicking on the Patients Display (Matlab App Installer). After installation, you should be able to see the app in matlab in the tab "app"<br>
 Step 6: Run the reporting app and import your own data. <br>
+<br><br>
+# small remarks:
+The DO is genericly only analyzing these DoF 'ankle_angle_l','knee_angle_l','hip_flexion_l','hip_adduction_l','hip_rotation_l'. This can be adapted in the code to fit your project.<br>
+The names of the reserve actuators are the DoF names without _reserve (in common practice it is DoF_reserve). Changing the reserve actuators name could result in problems in DO as this code looks in the results from the SO and replaces the SO-results with the DO-results.<br>
 
  
