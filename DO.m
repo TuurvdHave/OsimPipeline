@@ -51,10 +51,6 @@ trailname = temp(1:end-18);
             %prepare directories
             %-------------------
             output_so  = fullfile(path_output,'StaticOptimization');
-            if ~exist(output_so);
-                mkdir(fullfile(output_so,'log'));
-            end
-            
             setupso = fullfile(path_output,'SetUp_StaticOptimization');
             if ~exist(setupso);
                 mkdir(setupso);

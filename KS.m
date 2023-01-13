@@ -66,9 +66,6 @@ for file = 3:2:nfiles-1
         %prepare directories
         %-------------------
         output_kin  = fullfile(path_output,'InverseKinematics');
-        if ~exist(output_kin);
-            mkdir(fullfile(output_kin,'log'));
-        end
         setup = fullfile(path_output,'SetUp_InverseKinematics');
         if ~exist(setup);
             mkdir(setup);
@@ -106,9 +103,6 @@ else
         %prepare directories
         %-------------------
         output_kin  = fullfile(path_output,'InverseKinematics');
-        if ~exist(output_kin);
-            mkdir(fullfile(output_kin,'log'));
-        end
         setup = fullfile(path_output,'SetUp_InverseKinematics');
         if ~exist(setup);
             mkdir(setup);

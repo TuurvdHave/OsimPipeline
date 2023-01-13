@@ -46,11 +46,7 @@ trailname = temp(1:end-18);
          SetupID = xml_read(fullfile(path_output,'SetUp_InverseDynamics',[trailname '.xml' ]));
             %prepare directories
             %-------------------
-            output_so  = fullfile(path_output,'StaticOptimization');
-            if ~exist(output_so);
-                mkdir(fullfile(output_so,'log'));
-            end
-            
+            output_so  = fullfile(path_output,'StaticOptimization');           
             setupso = fullfile(path_output,'SetUp_StaticOptimization');
             if ~exist(setupso);
                 mkdir(setupso);
