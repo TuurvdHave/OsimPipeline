@@ -47,7 +47,10 @@ trailname = temp(1:end-29);
         SetupSO = xml_read(fullfile(path_output,'SetUp_StaticOptimization',[trailname '.xml' ]));
             %prepare directories
             %-------------------
-            output_jrl  = fullfile(path_output,'JointReaction');            
+            output_jrl  = fullfile(path_output,'JointReaction'); 
+            if ~exist(output_jrl);
+                mkdir(output_jrl);
+            end
             setupjrl = fullfile(path_output,'SetUp_JointReaction');
             if ~exist(setupjrl);
                 mkdir(setupjrl);

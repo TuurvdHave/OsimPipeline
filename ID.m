@@ -86,7 +86,10 @@ trailname = temp(1:end-4);
         %prepare directories
         %-------------------
         
-        output_dyn  = fullfile(path_output,'InverseDynamics');       
+        output_dyn  = fullfile(path_output,'InverseDynamics'); 
+        if ~exist(output_dyn);
+            mkdir(output_dyn);
+        end
         setupid = fullfile(path_output,'SetUp_InverseDynamics');
         if ~exist(setupid);
             mkdir(setupid);

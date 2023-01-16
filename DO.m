@@ -51,6 +51,9 @@ trailname = temp(1:end-18);
             %prepare directories
             %-------------------
             output_so  = fullfile(path_output,'StaticOptimization');
+            if ~exist(output_so);
+                mkdir(output_so);
+            end
             setupso = fullfile(path_output,'SetUp_StaticOptimization');
             if ~exist(setupso);
                 mkdir(setupso);
@@ -63,7 +66,7 @@ trailname = temp(1:end-18);
             
             info = importdata(fullfile(path_output,'InverseKinematics', [trailname '.mot']));
             
-            Misc.DofNames_Input={'ankle_angle_l','knee_angle_l','hip_flexion_l','hip_adduction_l','hip_rotation_l'}; %Indicate for which dof you want to solve the optimization.
+            Misc.DofNames_Input={'ankle_angle_l','knee_angle_l','hip_flexion_l'}; %Indicate for which dof you want to solve the optimization.
 %             for i = 8:size(info.colheaders,2)
 %             Misc.DofNames_Input{i-7} = info.colheaders{i};
 %             end 
