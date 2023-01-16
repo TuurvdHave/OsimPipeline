@@ -65,8 +65,8 @@ for subjectnr = 1 : size(subjectname,2)
             if strcmpi(answer(7,1),'yes')
             Summarize(fullfile(path,file),[finfilename '_JointReaction_ReactionLoads.sto'],subjectname(subjectnr),mainpath);
             end  
-            end
             a = a +1;
+            end
             end 
     end 
     end 
