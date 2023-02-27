@@ -1,17 +1,38 @@
+% Close all open figures
 close all 
+
+% Clear all variables from workspace
 clear all 
+
+% Clear the command window
 clc 
+
 %% Input parameters for the code (no paths need to be adapted)
+
+% Use uigetdir to allow the user to select the folder where the project is stored
 mainpath = uigetdir(cd,'Select the folder where you stored your project with all particpants');
+
+% Get a list of all the files and folders in the project folder
 folders = dir(mainpath);
+
+% Set a counter to keep track of the number of participants
 a = 1; 
+
+% Loop through all the folders in the project folder
 for i = 3 : size(folders,1)
+    % Check if the folder is named "GenericSetup"
     if strcmpi(folders(i).name,'GenericSetup') == 0 
+        % If it's not, add the folder name to a cell array called "subjectname"
         subjectname{a} = folders(i).name;
+        % Increment the counter
         a = a + 1; 
     end 
 end 
+
+% Use uigetfile to allow the user to select the params.json file for specific inputs
 [file,path] = uigetfile('*.*','Select params.json file to define specific inputs');
+
+% Use inputdlg to get yes or no answers to questions about which analyses to run
 answer = inputdlg({'IK? Answer with yes or no','KS?','ID?','SO?','DO?','JRF?','Save in .mat?'},'Analyses',[1 35],{'yes','yes','yes','yes','yes','yes','yes'});
 %% Running the analysis 
 for subjectnr = 1 : size(subjectname,2)
