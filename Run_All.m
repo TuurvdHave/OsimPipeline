@@ -32,14 +32,18 @@ end
 % Use uigetfile to allow the user to select the params.json file for specific inputs
 [file,path] = uigetfile('*.*','Select params.json file to define specific inputs');
 
-% Use inputdlg to get yes or no answers to questions about which analyses to run
-answer = inputdlg({'IK? Answer with yes or no','KS?','ID?','SO?','DO?','JRF?','Save in .mat?'},'Analyses',[1 35],{'yes','yes','yes','yes','yes','yes','yes'});
 %% Running the analysis 
 for subjectnr = 1 : size(subjectname,2)
-    filenames = dir(char(fullfile(path,subjectname(subjectnr))));
+    filenames = dir(char(fullfile(mainpath,subjectname(subjectnr))));
     a = 3;
     for nfile = 3 : size(filenames,1)
+
+        %% analyzing marker data 
         if strcmpi(filenames(nfile).name(end-3:end),'.trc')
+            % Use inputdlg to get yes or no answers to questions about which analyses to run
+            if ~exist('answer')
+            answer = inputdlg({'IK? Answer with yes or no','KS?','ID?','SO?','DO?','JRF?','Save in .mat?'},'Analyses',[1 35],{'yes','yes','yes','yes','yes','yes','yes'});
+            end 
             if strcmpi(answer(1,1),'yes')
             IK(fullfile(path,file),filenames(nfile).name,subjectname(subjectnr),mainpath);
             end 
@@ -89,6 +93,32 @@ for subjectnr = 1 : size(subjectname,2)
             a = a +1;
             end
             end 
-    end 
-    end 
-end 
+
+            %% Analyzing the IMU data 
+        elseif strcmpi(filenames(nfile).name(end-4:end),'.mvnx') 
+            % Use inputdlg to get yes or no answers to questions about which analyses to run
+            if ~exist('answer')
+            answer = inputdlg({'Scaling? Answer with yes or no','Convert to STO?','Dynamic calibration?','IK?','ID?','SO?','DO?','JRF?','Save in .mat?'},'Analyses',[1 35],{'yes','yes','yes','no','no','no','no','no','no'});
+            end 
+            if strcmpi(answer(1,1),'yes') && ~exist(char(fullfile(mainpath,subjectname(subjectnr),[char(subjectname(subjectnr)) '.osim'])))
+                height = str2double(inputdlg('Type the height of the participant (cm):'));
+                weight = str2double(inputdlg('Type the weight of the participant (kg):'));
+                LinScaling(fullfile(path,file),subjectname(subjectnr),mainpath,height,weight);
+            end
+            if strcmpi(answer(2,1),'yes')
+                MVNXtoSTO(fullfile(path,file),filenames(nfile).name,subjectname(subjectnr),mainpath);
+            end
+            if strcmpi(answer(3,1),'yes') && ~exist(char(fullfile(mainpath,subjectname(subjectnr),[char(subjectname(subjectnr)) '_Scaled.osim'])))
+                   MVNXtoSTO(fullfile(path,file),'squat.mvnx',subjectname(subjectnr),mainpath); 
+                   MVNXtoSTO(fullfile(path,file),'hipfront.mvnx',subjectname(subjectnr),mainpath); 
+                   IMU_Placer_GdR(fullfile(path,file),subjectname(subjectnr),mainpath);
+            elseif strcmpi(answer(3,1),'no') && ~exist(char(fullfile(mainpath,subjectname(subjectnr),[char(subjectname(subjectnr)) '_Scaled.osim'])))
+                   MVNXtoSTO(fullfile(path,file),'static.mvnx',subjectname(subjectnr),mainpath);
+                   IMU_Placer(fullfile(path,file),subjectname(subjectnr),mainpath);
+            end 
+            if strcmpi(answer(4,1),'yes')
+                IMU_IK(fullfile(path,file),filenames(nfile).name,subjectname(subjectnr),mainpath);
+            end 
+        end % if .trc
+    end % for nfiles 
+end % for subjectnr 

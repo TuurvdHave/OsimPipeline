@@ -37,6 +37,7 @@ AnalogFrameRate = data.AnalogFrameRate;
 VideoFrameRate  = data.VideoFrameRate;
 path_input      = fullfile(main_path,Subject); 
 path_output     = fullfile(main_path,Subject,'Opensim'); 
+model_in  = fullfile(main_path,Subject,[Subject '_Scaled.osim']);
 
 % Process each motion trial separately
 if isfile(fullfile(main_path,Subject,[input_file(1:end-4) '.csv']))
@@ -75,7 +76,7 @@ if isfile(fullfile(main_path,Subject,[input_file(1:end-4) '.csv']))
             
             % Run the IK tool
             
-           commando = fullfile(setup,[trailname Side num2str((file-1)/2) '.xml' ]);
+           commando = fullfile(setup,[input_file(1:end-4) Side num2str((file-1)/2) '.xml' ]);
             
            if contains(OpenSim_path,'3.')
             exe_path=[OpenSim_path 'ik.exe'];
@@ -92,7 +93,7 @@ if isfile(fullfile(main_path,Subject,[input_file(1:end-4) '.csv']))
     end %if static
 end % for frames 
 else
-    if ~contains(trailname,'static')
+    if ~contains(input_file(1:end-4),'static')
         % Set up directories for IK
         output_kin  = fullfile(path_output,'InverseKinematics');
         if ~exist(output_kin);
@@ -112,14 +113,14 @@ else
         SetupIK = xml_read(strcat(Generic_files, '\IK_Generic.xml'));
         SetupIK.InverseKinematicsTool.model_file = [model_in];
         SetupIK.InverseKinematicsTool.time_range = [string(TRCdata(1,2)) ' ' string(TRCdata(end,2))];
-        SetupIK.InverseKinematicsTool.marker_file = strcat(path_input,'\', trailname, '.trc'); 
-        SetupIK.InverseKinematicsTool.output_motion_file = strcat(output_kin,'\', trailname,'.mot'); 
+        SetupIK.InverseKinematicsTool.marker_file = strcat(path_input,'\', input_file(1:end-4), '.trc'); 
+        SetupIK.InverseKinematicsTool.output_motion_file = strcat(output_kin,'\', input_file(1:end-4),'.mot'); 
         SetupIK.InverseKinematicsTool.results_directory = output_kin;
-        xml_write(fullfile(setup,[trailname '.xml' ]), SetupIK, 'OpenSimDocument'); 
+        xml_write(fullfile(setup,[input_file(1:end-4) '.xml' ]), SetupIK, 'OpenSimDocument'); 
         
         % Run the IK tool
 
-        commando = [fullfile(setup,[trailname '.xml' ])];
+        commando = [fullfile(setup,[input_file(1:end-4) '.xml' ])];
         
         if contains(OpenSim_path,'3.')
         exe_path=[OpenSim_path 'ik.exe'];
