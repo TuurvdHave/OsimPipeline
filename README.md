@@ -21,7 +21,8 @@ Step 2: The model will be scaled based on the height and the weight of the subje
 1) using the static calibration as described in detail here: https://simtk-confluence.stanford.edu:8443/display/OpenSim/OpenSense+-+Kinematics+with+IMU+Data. The code will look for a .mnvx-file that is named "static" to automatically calibrate the model. 
 2) using the dynamic calibration procedure described in Di Raimondo et al. https://www.mdpi.com/1424-8220/22/9/3259. The code will look for two .mvnx-files. One should be named "squat" and one should be called "hipfront"
 <br><br>
-<b> Next steps are again similar for both files </b> <br>			
+
+<b> Next steps are again similar for both files </b> <br>	
 Step 3: Adapt the params.json file with a text editor. The "osim_path" should refer to intallation folder of your OpenSim. The ks3x or the ks4x should refer to the folder containing the kalman smoother (kalman smoother can be found here: https://simtk.org/projects/kalmanforik)
 make sure you have the right KS to your OpenSim version. The other lines should be adapted to the information of your project.<br> 
 Step 4: run the matlab code Run_all.m <br>
