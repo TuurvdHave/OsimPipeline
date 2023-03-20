@@ -29,6 +29,7 @@ If you are running dynamic optimization (muscle redundancy solver) (make sure th
 make sure you check https://github.com/KULeuvenNeuromechanics/MuscleRedundancySolver. Everthing is documented there. <br>
 Step 5: Install the reporting app by double clicking on the Patients Display (Matlab App Installer). After installation, you should be able to see the app in matlab in the tab "app"<br>
 Step 6: Run the reporting app and import your own data. <br>
+You can use the Run_Select when you only want to run a selection of trials. The code works exactly the same as Run_all but instead of selecting a folder containing all trials you just select the trials, you want to analyze. 
 <br><br>
 # small remarks:
 The DO is genericly only analyzing these DoF 'ankle_angle_l','knee_angle_l','hip_flexion_l','hip_adduction_l','hip_rotation_l'. This can be adapted in the code to fit your project.<br>
