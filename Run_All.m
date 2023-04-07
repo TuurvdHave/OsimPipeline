@@ -113,12 +113,27 @@ for subjectnr = 1 : size(subjectname,2)
                    MVNXtoSTO(fullfile(path,file),'hipfront.mvnx',subjectname(subjectnr),mainpath); 
                    IMU_Placer_GdR(fullfile(path,file),subjectname(subjectnr),mainpath);
             elseif strcmpi(answer(3,1),'no') && ~exist(char(fullfile(mainpath,subjectname(subjectnr),[char(subjectname(subjectnr)) '_Scaled.osim'])))
-                   MVNXtoSTO(fullfile(path,file),'static.mvnx',subjectname(subjectnr),mainpath);
+                   MVNXtoSTO(fullfile(path,file),'Static.mvnx',subjectname(subjectnr),mainpath);
                    IMU_Placer(fullfile(path,file),subjectname(subjectnr),mainpath);
             end 
             if strcmpi(answer(4,1),'yes')
                 IMU_IK(fullfile(path,file),filenames(nfile).name,subjectname(subjectnr),mainpath);
-            end 
+            end
+            if strcmpi(answer(5,1),'yes')
+            ID(fullfile(path,file),[filenames(nfile).name(1:end-5) '.mot'],subjectname(subjectnr),mainpath);
+            end
+            if strcmpi(answer(6,1),'yes')
+            SO(fullfile(path,file),[filenames(nfile).name(1:end-5) '_ExternalLoads.xml'],subjectname(subjectnr),mainpath);
+            end
+            if strcmpi(answer(7,1),'yes')
+            DO(fullfile(path,file),[filenames(nfile).name(1:end-5) '_ExternalLoads.xml'],subjectname(subjectnr),mainpath);
+            end
+            if strcmpi(answer(8,1),'yes')
+            JRF(fullfile(path,file),[filenames(nfile).name(1:end-5) '_StaticOptimization_force.sto'],subjectname(subjectnr),mainpath);
+            end
+            if strcmpi(answer(9,1),'yes')
+            Summarize(fullfile(path,file),[filenames(nfile).name(1:end-5) '_JointReaction_ReactionLoads.sto'],subjectname(subjectnr),mainpath);
+            end
         end % if .trc
     end % for nfiles 
 end % for subjectnr 
