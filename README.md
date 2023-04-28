@@ -36,4 +36,6 @@ You can use the Run_Select when you only want to run a selection of trials. The 
 The DO is genericly only analyzing these DoF 'ankle_angle_l','knee_angle_l','hip_flexion_l','hip_adduction_l','hip_rotation_l'. This can be adapted in the code to fit your project.<br>
 The names of the reserve actuators are the DoF names without _reserve (in common practice it is DoF_reserve). Changing the reserve actuators name could result in problems in DO as this code looks in the results from the SO and replaces the SO-results with the DO-results.<br>
 
+!important to know! 
+All paths should not contain any spaces as this will make the files unreadable for the computer
  
