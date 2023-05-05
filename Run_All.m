@@ -53,7 +53,7 @@ for subjectnr = 1 : size(subjectname,2)
             % when events files are used the name of output kinematicfiles
             % will be changed according to the event. The final name is
             % checked here
-            kinfilenames = dir(char(fullfile(path,subjectname(subjectnr),'OpenSim\InverseKinematics')));
+            kinfilenames = dir(char(fullfile(mainpath,subjectname(subjectnr),'OpenSim\InverseKinematics')));
             if strcmpi(filenames(nfile).name(1:end-4),kinfilenames(a).name(1:end-4)) % if no events are detected
                 finfilename = filenames(nfile).name(1:end-4);
             if strcmpi(answer(3,1),'yes')
