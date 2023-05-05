@@ -96,13 +96,16 @@ else
     if ~contains(input_file(1:end-4),'static')
         % Set up directories for IK
         output_kin  = fullfile(path_output,'InverseKinematics');
-        if ~exist(output_kin);
+        if ~exist(output_kin)
             mkdir(output_kin);
         end
         setup = fullfile(path_output,'SetUp_InverseKinematics');
-        if ~exist(setup);
+        if ~exist(setup)
             mkdir(setup);
         end
+        if ~exist([setup,'\log'])
+            mkdir([setup,'\log']);
+        end 
 
         %r Read in the trc-file to extract the time
 
@@ -120,7 +123,9 @@ else
         
         % Run the IK tool
 
-        commando = [fullfile(setup,[input_file(1:end-4) '.xml' ])];
+        %commando = [fullfile(setup,[input_file(1:end-4) '.xml' ])];
+        commando = [fullfile(setup,[input_file(1:end-4) '.xml' ]) ' > ' fullfile(setup,'log',[input_file(1:end-4) '.log'])];
+
         
         if contains(OpenSim_path,'3.')
         exe_path=[OpenSim_path 'ik.exe'];
