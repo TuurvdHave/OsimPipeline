@@ -99,6 +99,9 @@ setupid = fullfile(path_output,'SetUp_InverseDynamics');
 if ~exist(setupid);
     mkdir(setupid);
 end
+if ~exist([setupid,'\log'])
+   mkdir([setupid,'\log']);
+end 
 
 if isfolder(fullfile(path_output,'SetUp_InverseKinematics'))
     SetupIK = xml_read(fullfile(path_output,'SetUp_InverseKinematics',[trailname '.xml' ]));
@@ -138,7 +141,8 @@ end
 
 xml_write([setupid,'\',[trailname '.xml' ]], ID_setup, 'OpenSimDocument');
 
-commando = [fullfile(setupid,[trailname '.xml' ])];% '" > "' fullfile(output_dyn,'log',[trailname '.log"'])]; commando = strrep(commando,'\','/');
+%commando = [fullfile(setupid,[trailname '.xml' ])];
+commando = [fullfile(setupid,[trailname '.xml' ]) ' > ' fullfile(setupid,'log',[trailname '.log'])];
 
 if contains(OpenSim_path,'3.')
     exe_path=[OpenSim_path 'id.exe'];

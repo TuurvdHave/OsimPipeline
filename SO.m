@@ -54,6 +54,9 @@ trailname = temp(1:end-18);
             if ~exist(setupso);
                 mkdir(setupso);
             end
+            if ~exist([setupso,'\log'])
+                mkdir([setupso,'\log']);
+            end 
             
             SO_setup = xml_read(strcat(Generic_files, '\SO_Generic.xml'));   
             SO_setup.AnalyzeTool.model_file = [model_in];
@@ -70,7 +73,10 @@ trailname = temp(1:end-18);
             
             xml_write([setupso,'/',[trailname '.xml' ]], SO_setup, 'OpenSimDocument');
 
-            commando = [fullfile(setupso,[trailname '.xml' ])];% '" > "' fullfile(output_so,'log',[trailname '.log"'])] ; commando = strrep(commando,'\','/');
+            %commando = [fullfile(setupso,[trailname '.xml' ])];
+            commando = [fullfile(setupso,[trailname '.xml' ]) ' > ' fullfile(setupso,'log',[trailname '.log'])];
+
+
             if contains(OpenSim_path,'3.')
             exe_path=[OpenSim_path 'analyze.exe'];
             full_command = [exe_path ' -S  ' commando];

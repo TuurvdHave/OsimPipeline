@@ -73,6 +73,10 @@ for file = 3:2:nfiles-1
         if ~exist(setup);
             mkdir(setup);
         end
+        if ~exist([setup,'\log'])
+           mkdir([setup,'\log']);
+        end 
+
               SetupIK = xml_read(strcat(Generic_files, '\IK_Generic.xml'));
                                 SetupIK.InverseKinematicsTool.model_file = [model_in];
                                 SetupIK.InverseKinematicsTool.time_range = [string(Times(file,1)),' ' string(Times(file,2))];
@@ -81,8 +85,9 @@ for file = 3:2:nfiles-1
                                 SetupIK.InverseKinematicsTool.results_directory = output_kin;
                                 xml_write(fullfile(setup,[trailname Side num2str((file-1)/2) '.xml' ]), SetupIK, 'OpenSimDocument'); 
             
-             commando = fullfile(setup,[trailname Side num2str((file-1)/2) '.xml' ]); % '" > "' fullfile(output_kin,'log',[trailname Side num2str((file-1)/2) '.log"'])];
-            
+             %commando = fullfile(setup,[trailname Side num2str((file-1)/2) '.xml' ]); 
+            commando = [fullfile(setup,[input_file(1:end-4) '.xml' ]) ' > ' fullfile(setup,'log',[input_file(1:end-4) '.log'])];
+
            % exe_path=[OpenSim_path 'ik.exe'];
            if contains(OpenSim_path,'3.')
             exe_path=[ KS3_path  'ks.exe'];
@@ -105,11 +110,19 @@ else
         
         %prepare directories
         %-------------------
-        output_kin  = fullfile(path_output,'InverseKinematics');
-        setup = fullfile(path_output,'SetUp_InverseKinematics');
-        if ~exist(setup);
-            mkdir(setup);
-        end
+            output_kin  = fullfile(path_output,'InverseKinematics');
+            if ~exist(output_kin);
+                mkdir(output_kin);
+            end
+            setup = fullfile(path_output,'SetUp_InverseKinematics');
+            if ~exist(setup);
+                mkdir(setup);
+            end
+            if ~exist([setup,'\log'])
+                mkdir([setup,'\log']);
+            end
+
+
        [TRCdata, labels] = importTRCdata(char(fullfile(main_path,Subject,input_file)));
               SetupIK = xml_read(strcat(Generic_files, '\IK_Generic.xml'));
                                 SetupIK.InverseKinematicsTool.model_file = [model_in];
@@ -119,8 +132,10 @@ else
                                 SetupIK.InverseKinematicsTool.results_directory = output_kin;
                                 xml_write(fullfile(setup,[trailname '.xml' ]), SetupIK, 'OpenSimDocument'); 
             
-            commando = [fullfile(setup,[trailname '.xml' ])];%'" > "' fullfile(output_kin,'log',[trailname '.log"'])]; commando = strrep(commando,'\','/');
-            
+            %commando = [fullfile(setup,[trailname '.xml' ])];
+            commando = [fullfile(setup,[input_file(1:end-4) '.xml' ]) ' > ' fullfile(setup,'log',[input_file(1:end-4) '.log'])];
+
+
             if contains(OpenSim_path,'3.')
             exe_path=[ KS3_path  'ks.exe'];
             full_command = [exe_path ' -S  ' commando];

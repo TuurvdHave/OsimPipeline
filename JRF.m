@@ -55,6 +55,9 @@ trailname = temp(1:end-29);
             if ~exist(setupjrl);
                 mkdir(setupjrl);
             end
+            if ~exist([setupjrl,'\log'])
+                mkdir([setupjrl,'\log']);
+            end 
             
             JRF_setup = xml_read(strcat(Generic_files, '/JRA_Generic.xml'));   
             
@@ -73,8 +76,9 @@ trailname = temp(1:end-29);
 
             xml_write([setupjrl,'/',[trailname '.xml' ]], JRF_setup, 'OpenSimDocument');
             
-            commando = [fullfile(setupjrl,[trailname '.xml' ])];% '" > "' fullfile(output_jrl,'log',[trailname '.log"'])] ; commando = strrep(commando,'\','/');
-            
+            %commando = [fullfile(setupjrl,[trailname '.xml' ])];
+            commando = [fullfile(setupjrl,[trailname '.xml' ]) ' > ' fullfile(setupjrl,'log',[trailname '.log'])];
+
             if contains(OpenSim_path,'3.')
             exe_path=[OpenSim_path 'analyze.exe'];
             full_command = [exe_path ' -S  ' commando];
