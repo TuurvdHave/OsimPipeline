@@ -80,7 +80,7 @@ if isfile(fullfile(main_path,Subject,[input_file(1:end-4) '.csv']))
             % Run the IK tool
             
            %commando = fullfile(setup,[input_file(1:end-4) Side num2str((file-1)/2) '.xml' ]);
-           commando = [fullfile(setup,[input_file(1:end-4) '.xml' ]) ' > ' fullfile(setup,'log',[input_file(1:end-4) '.log'])];
+           commando = [fullfile(setup,[input_file(1:end-4) Side num2str((file-1)/2) '.xml' ]) ' > ' fullfile(setup,'log',[input_file(1:end-4) Side num2str((file-1)/2) '.log'])];
             
            if contains(OpenSim_path,'3.')
             exe_path=[OpenSim_path 'ik.exe'];

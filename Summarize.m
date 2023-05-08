@@ -37,25 +37,25 @@ trailname = temp(1:end-32);
 % reading in the IK 
 IK_path = fullfile(path_output,'InverseKinematics', [trailname '.mot']);
 if isfile(IK_path)
-Subjects.(char(Subject)).(char(strrep(strrep(trailname,'#','_'),'-','_'))).Kinematics = importdata(IK_path);
+Subjects.(char(Subject)).(char(strrep(strrep(strrep(trailname,'#','_'),'-','_'),'+','plus'))).Kinematics = importdata(IK_path);
 end 
 % reading in the ID 
 ID_path = fullfile(path_output,'InverseDynamics', [trailname '.sto']);
 if isfile(ID_path)
-Subjects.(char(Subject)).(char(strrep(strrep(trailname,'#','_'),'-','_'))).Dynamics = importdata(ID_path);
+Subjects.(char(Subject)).(char(strrep(strrep(strrep(trailname,'#','_'),'-','_'),'+','plus'))).Dynamics = importdata(ID_path);
 end 
 % reading in the SO files 
 Muscle_path = fullfile(path_output,'StaticOptimization', [trailname '_StaticOptimization_force.sto']);
 if isfile(Muscle_path)
-Subjects.(char(Subject)).(char(strrep(strrep(trailname,'#','_'),'-','_'))).MuscleForces = importdata(Muscle_path);
+Subjects.(char(Subject)).(char(strrep(strrep(strrep(trailname,'#','_'),'-','_'),'+','plus'))).MuscleForces = importdata(Muscle_path);
 
 Muscle_path = fullfile(path_output,'StaticOptimization', [trailname '_StaticOptimization_activation.sto']);
-Subjects.(char(Subject)).(char(strrep(strrep(trailname,'#','_'),'-','_'))).MuscleActivations = importdata(Muscle_path);
+Subjects.(char(Subject)).(char(strrep(strrep(strrep(trailname,'#','_'),'-','_'),'+','plus'))).MuscleActivations = importdata(Muscle_path);
 end 
 % reading in the JRF 
 JRF_path = fullfile(path_output,'JointReaction', [trailname '_JointReaction_ReactionLoads.sto']);
 if isfile(JRF_path)
-Subjects.(char(Subject)).(char(strrep(strrep(trailname,'#','_'),'-','_'))).JointContactForces = importdata(JRF_path);
+Subjects.(char(Subject)).(char(strrep(strrep(strrep(trailname,'#','_'),'-','_'),'+','plus'))).JointContactForces = importdata(JRF_path);
 end 
 
 save(fullfile(path_output,'Stored.mat'),'Subjects')
