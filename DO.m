@@ -9,14 +9,12 @@ addpath(genpath(fullfile(cd,'GenericSetup')))
 addpath(genpath(fullfile(cd,'SubFunctions')))
 addpath(genpath(fullfile(cd,'MuscleRedundancySolver-master')))
 %% 
-disp('Loading params file')
 fid = fopen(params); 
 raw = fread(fid,inf); 
 str = char(raw'); 
 fclose(fid); 
 data = jsondecode(str);
-disp('Loaded parameters')
-disp(data);
+
 
 
 %% Define input
@@ -40,7 +38,6 @@ path_output     = fullfile(main_path,Subject,'Opensim');
 
 %load OSIM model
 model_in  = fullfile(main_path,Subject,[Subject '_Scaled.osim']);
-disp(model_in);
 trailname = input_file;
 disp(trailname)
 temp = char(trailname);

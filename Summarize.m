@@ -5,14 +5,11 @@ addpath(genpath(fullfile(cd,'GenericSetup')))
 addpath(genpath(fullfile(cd,'SubFunctions')))
 
 %% 
-disp('Loading params file')
 fid = fopen(params); 
 raw = fread(fid,inf); 
 str = char(raw'); 
 fclose(fid); 
 data = jsondecode(str);
-disp('Loaded parameters')
-disp(data)
 
 %% Define input
 %--------------

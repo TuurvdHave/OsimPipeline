@@ -19,14 +19,11 @@ addpath(genpath(fullfile(cd,'GenericSetup')))
 addpath(genpath(fullfile(cd,'SubFunctions')))
 
 % Load the parameters file (in JSON format)
-disp('Loading params file')
 fid = fopen(params); 
 raw = fread(fid,inf); 
 str = char(raw'); 
 fclose(fid); 
 data = jsondecode(str);
-disp('Loaded parameters')
-disp(data);
 
 % Set up paths for input and output files
 main_path       = mainpath; 

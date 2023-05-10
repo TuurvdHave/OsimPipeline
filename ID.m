@@ -5,14 +5,12 @@ addpath(genpath(fullfile(cd,'GenericSetup')))
 addpath(genpath(fullfile(cd,'SubFunctions')))
 
 %%
-disp('Loading params file')
 fid = fopen(params);
 raw = fread(fid,inf);
 str = char(raw');
 fclose(fid);
 data = jsondecode(str);
-disp('Loaded parameters')
-disp(data);
+
 
 
 %% Define input
@@ -36,7 +34,6 @@ path_output     = fullfile(main_path,Subject,'Opensim');
 
 %load OSIM model
 model_in  = fullfile(main_path,Subject,[Subject '_Scaled.osim']);
-disp(model_in);
 trailname = input_file;
 disp(trailname)
 temp = char(trailname);
@@ -75,7 +72,7 @@ elseif isfolder(fullfile(path_output,'SetUp_IMU_InverseKinematics')) && isfile(f
 
     %left leg
     ExternalLoads.ExternalLoads.objects.ExternalForce(2).data_source_name = strcat(SetupIK.InverseKinematicsTool.marker_file(1:end-4),'.mot');
-else 
+else
     SetupIK = xml_read(fullfile(path_output,'SetUp_IMU_InverseKinematics',[trailname '.xml' ]));
     ExternalLoads = xml_read(strcat(Generic_files, '\ExternalLoads.xml'));
 end
@@ -100,8 +97,8 @@ if ~exist(setupid);
     mkdir(setupid);
 end
 if ~exist([setupid,'\log'])
-   mkdir([setupid,'\log']);
-end 
+    mkdir([setupid,'\log']);
+end
 
 if isfolder(fullfile(path_output,'SetUp_InverseKinematics'))
     SetupIK = xml_read(fullfile(path_output,'SetUp_InverseKinematics',[trailname '.xml' ]));
@@ -126,7 +123,7 @@ elseif isfolder(fullfile(path_output,'SetUp_IMU_InverseKinematics')) && isfile(f
     ID_setup.InverseDynamicsTool.output_gen_force_file  =  strcat(trailname,'.sto');
     ID_setup.InverseDynamicsTool.external_loads_file = (char(fullfile(dir_el,[trailname  '_ExternalLoads.xml'])));
 
-else 
+else
     SetupIK = xml_read(fullfile(path_output,'SetUp_IMU_InverseKinematics',[trailname '.xml' ]));
     ID_setup = xml_read(strcat(Generic_files, '\ID_Generic.xml'));
     ID_setup.InverseDynamicsTool.model_file = [model_in];
@@ -153,6 +150,16 @@ elseif contains(OpenSim_path,'4.')
 end
 system(full_command);
 
-disp('ID done')
+if isfile(strcat(output_dyn,'\',trailname,'.sto'))
+    disp('ID done')
+else
+    f = warndlg({['NOPE! Your Inverse dynamics of ' trialname ' did not work.'];...
+        'This could have multiple reasons:';...
+        '1) Check your OpenSim path in param.json and do not forget the double \\';...
+        '2) Make sure the folder construction is similar to the one in the readme.';...
+        '3) All paths can not contain spaces as the windows command shell is not able to handle this';...
+        '4) check the names of the generic setup files. They should be like written in the readme';...
+        });
+end
 
 end

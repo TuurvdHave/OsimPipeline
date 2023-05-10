@@ -18,52 +18,60 @@ addpath(genpath(fullfile(cd,'GenericSetup')))
 addpath(genpath(fullfile(cd,'SubFunctions')))
 
 % Load the parameters file (in JSON format)
-disp('Loading params file')
-fid = fopen(params); 
-raw = fread(fid,inf); 
-str = char(raw'); 
-fclose(fid); 
+fid = fopen(params);
+raw = fread(fid,inf);
+str = char(raw');
+fclose(fid);
 data = jsondecode(str);
-disp('Loaded parameters')
-disp(data);
+
 
 % Set up paths for input and output files
-main_path       = mainpath; 
-OpenSim_path    = data.osim_path; 
+main_path       = mainpath;
+OpenSim_path    = data.osim_path;
 Generic_files   = [mainpath,'\GenericSetup'];
-Subject         = char(subject); 
-path_input      = fullfile(main_path,Subject); 
-path_output     = fullfile(main_path,Subject,'Opensim'); 
+Subject         = char(subject);
+path_input      = fullfile(main_path,Subject);
+path_output     = fullfile(main_path,Subject,'Opensim');
 
-            %% IMU Inverse Kinematics
-            %--------------------
+%% IMU Inverse Kinematics
+%--------------------
 
-            %prepare directories
-            %-------------------
-            output_kin  = fullfile(path_output,'InverseKinematics');
-            if ~exist(output_kin);
-                mkdir(output_kin);
-            end
-            setupimuik = fullfile(path_output,'Setup_IMU_InverseKinematics');
-            if ~exist(setupimuik)
-                mkdir(setupimuik);
-            end
-            % calculate end time of the trial
-            load(fullfile(path_input,[input_file(1:end-5) '_DataMatrix.mat']))
-            time_length = time(end);
+%prepare directories
+%-------------------
+output_kin  = fullfile(path_output,'InverseKinematics');
+if ~exist(output_kin);
+    mkdir(output_kin);
+end
+setupimuik = fullfile(path_output,'Setup_IMU_InverseKinematics');
+if ~exist(setupimuik)
+    mkdir(setupimuik);
+end
+% calculate end time of the trial
+load(fullfile(path_input,[input_file(1:end-5) '_DataMatrix.mat']))
+time_length = time(end);
 
-            SetupIMUIK = xml_read(strcat(Generic_files, '/IMU_IK_Generic.xml'));
-            SetupIMUIK.IMUInverseKinematicsTool.model_file = [path_input '/' Subject '_Scaled.osim'];
-            SetupIMUIK.IMUInverseKinematicsTool.time_range = string([0, time_length]);
-            SetupIMUIK.IMUInverseKinematicsTool.output_motion_file = strcat(output_kin,'/', input_file(1:end-5),'.mot');
-            SetupIMUIK.IMUInverseKinematicsTool.results_directory = output_kin;
-            SetupIMUIK.IMUInverseKinematicsTool.orientations_file = fullfile(path_input, append(input_file(1:end-5), '_orientations.sto'));
-            SetupIMUIK.IMUInverseKinematicsTool.sensor_to_opensim_rotations = '-1.5707963267948966 0 0';
+SetupIMUIK = xml_read(strcat(Generic_files, '/IMU_IK_Generic.xml'));
+SetupIMUIK.IMUInverseKinematicsTool.model_file = [path_input '/' Subject '_Scaled.osim'];
+SetupIMUIK.IMUInverseKinematicsTool.time_range = string([0, time_length]);
+SetupIMUIK.IMUInverseKinematicsTool.output_motion_file = strcat(output_kin,'/', input_file(1:end-5),'.mot');
+SetupIMUIK.IMUInverseKinematicsTool.results_directory = output_kin;
+SetupIMUIK.IMUInverseKinematicsTool.orientations_file = fullfile(path_input, append(input_file(1:end-5), '_orientations.sto'));
+SetupIMUIK.IMUInverseKinematicsTool.sensor_to_opensim_rotations = '-1.5707963267948966 0 0';
 
-            xml_write(fullfile(setupimuik,[input_file(1:end-5) '.xml' ]), SetupIMUIK, 'OpenSimDocument');
-            commando = fullfile(setupimuik,[input_file(1:end-5) '.xml' ]);
+xml_write(fullfile(setupimuik,[input_file(1:end-5) '.xml' ]), SetupIMUIK, 'OpenSimDocument');
+commando = fullfile(setupimuik,[input_file(1:end-5) '.xml' ]);
 
-            exe_path=[OpenSim_path 'opensense.exe'];
-            full_command = [exe_path ' -IK "'  commando];
-            system(full_command);
-            disp('IMU IK done')
+exe_path=[OpenSim_path 'opensense.exe'];
+full_command = [exe_path ' -IK "'  commando];
+system(full_command);
+if isfile(strcat(output_kin,'/', input_file(1:end-5),'.mot'))
+    disp('IK done')
+else
+    f = warndlg({['NOPE! Your Inverse kinematics of ' input_file(1:end-5) ' did not work.'];...
+        'This could have multiple reasons:';...
+        '1) Check your OpenSim path in param.json and do not forget the double \\';...
+        '2) Make sure the folder construction is similar to the one in the readme.';...
+        '3) All paths can not contain spaces as the windows command shell is not able to handle this';...
+        '4) check the names of the generic setup files. They should be like written in the readme';...
+        });
+end

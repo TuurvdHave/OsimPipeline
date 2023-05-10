@@ -5,14 +5,12 @@ addpath(genpath(fullfile(cd,'GenericSetup')))
 addpath(genpath(fullfile(cd,'SubFunctions')))
 
 %%
-disp('Loading params file')
 fid = fopen(params);
 raw = fread(fid,inf);
 str = char(raw');
 fclose(fid);
 data = jsondecode(str);
-disp('Loaded parameters')
-disp(data);
+
 
 
 %% Define input
@@ -102,11 +100,12 @@ if isfile(fullfile(main_path,Subject,[trailname '.csv']))
             if isfile(strcat(output_kin,'\', input_file(1:end-4), Side ,num2str((file-1)/2),'.mot'))
                 disp('IK done')
             else
-                f = warndlg({'NOPE! Your Inverse kinematics did not work.';...
+                f = warndlg({['NOPE! Your Inverse kinematics of ' input_file(1:end-4) ' did not work.'];...
                     'This could have multiple reasons:';...
                     '1) Check your OpenSim path in param.json and do not forget the double \\';...
                     '2) Make sure the folder construction is similar to the one in the readme.';...
                     '3) All paths can not contain spaces as the windows command shell is not able to handle this';...
+                    '4) check the names of the generic setup files. They should be like written in the readme';...
                     });
             end
 
@@ -155,14 +154,15 @@ else
 
         system(full_command);
 
-        if isfile(strcat(output_kin,'\', input_file(1:end-4), Side ,num2str((file-1)/2),'.mot'))
+        if isfile(strcat(output_kin,'\', input_file(1:end-4),'.mot'))
             disp('IK done')
         else
-            f = warndlg({'NOPE! Your Inverse kinematics did not work.';...
+            f = warndlg({['NOPE! Your Inverse kinematics of ' input_file(1:end-4) ' did not work.'];...
                 'This could have multiple reasons:';...
                 '1) Check your OpenSim path in param.json and do not forget the double \\';...
                 '2) Make sure the folder construction is similar to the one in the readme.';...
                 '3) All paths can not contain spaces as the windows command shell is not able to handle this';...
+                '4) check the names of the generic setup files. They should be like written in the readme';...
                 });
         end
 
