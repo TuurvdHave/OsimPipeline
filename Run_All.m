@@ -41,7 +41,7 @@ for subjectnr = 1 : size(subjectname,2)
         if strcmpi(filenames(nfile).name(end-3:end),'.trc')
             % Use inputdlg to get yes or no answers to questions about which analyses to run
             if ~exist('answer')
-                answer = inputdlg({'IK? Answer with yes or no','KS?','ID?','SO?','DO?','JRF?','Save in .mat?'},'Analyses',[1 35],{'yes','yes','yes','yes','yes','yes','yes'});
+                answer = inputdlg({'IK? Answer with yes or no','KS?','ID?','SO?','DO?','JRF?','Save in .mat?'},'Analyses',[1 35],{'yes','no','yes','yes','no','yes','yes'});
             end
             if strcmpi(answer(1,1),'yes')
                 IK(fullfile(path,file),filenames(nfile).name,subjectname(subjectnr),mainpath);

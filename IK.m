@@ -41,6 +41,7 @@ model_in  = fullfile(main_path,Subject,[Subject '_Scaled.osim']);
 if isfile(fullfile(main_path,Subject,[input_file(1:end-4) '.csv']))
     Fr = importFrames(fullfile(main_path,Subject,[input_file(1:end-4) '.csv']));
     nfiles = size(Fr,1);
+    uneven = 0;
     for file = 3:2:nfiles-1
         if ~contains(input_file,'static')
 
@@ -49,8 +50,20 @@ if isfile(fullfile(main_path,Subject,[input_file(1:end-4) '.csv']))
                 Times(file,1) = Fr.Time(file);
                 Times(file,2) = Fr.Time(file+1);
                 Side = char(Fr.General(file));
+                uneven = 0;
             else
-                break
+                if uneven == 1
+                    if strcmp(string(Fr.FootStrike(file+1)),'Foot Strike') && strcmp(string(Fr.FootStrike(file+2)),'Foot Off')
+                        Times(file,1) = Fr.Time(file+1);
+                        Times(file,2) = Fr.Time(file+2);
+                        Side = char(Fr.General(file));
+                    else 
+                        break
+                    end
+                else 
+                    uneven = 1;
+                    continue
+                end 
             end
 
             % Set up directories for IK
@@ -93,7 +106,7 @@ if isfile(fullfile(main_path,Subject,[input_file(1:end-4) '.csv']))
             if isfile(strcat(output_kin,'\', input_file(1:end-4), Side ,num2str((file-1)/2),'.mot'))
                 disp('IK done')
             else
-                f = warndlg({['NOPE! Your Inverse kinematics of ' trialname ' did not work.'];...
+                f = warndlg({['NOPE! Your Inverse kinematics of ' input_file(1:end-4) ' did not work.'];...
                     'This could have multiple reasons:';...
                     '1) Check your OpenSim path in param.json and do not forget the double \\';...
                     '2) Make sure the folder construction is similar to the one in the readme.';...
