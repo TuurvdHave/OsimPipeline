@@ -13,6 +13,7 @@ Step 2: Do all the different steps in OpenSim and save your scaled model in the 
 			- IK setup: IK_generic.xml<br>
 			- ID setup: ID_generic.xml<br>
 			- Externalloads file: ExternalLoads.xml<br>
+			- Reserve actuators file: Reserve_actuators.xml<br>
 			- SO setup: SO_generic.xml<br>
 			- Joint contact forces analyses: JRA_generic.xml<br>
 <br><br>
