@@ -63,7 +63,7 @@ trailname = temp(1:end-18);
             
             info = importdata(fullfile(path_output,'InverseKinematics', [trailname '.mot']));
             
-            Misc.DofNames_Input={'ankle_angle_l','knee_angle_l','hip_flexion_l'}; %Indicate for which dof you want to solve the optimization.
+            Misc.DofNames_Input={'ankle_angle_l','knee_angle_l','hip_flexion_l','hip_adduction_l','hip_rotation_l'}; %Indicate for which dof you want to solve the optimization.
 %             for i = 8:size(info.colheaders,2)
 %             Misc.DofNames_Input{i-7} = info.colheaders{i};
 %             end 
@@ -94,12 +94,17 @@ trailname = temp(1:end-18);
             Misc.f_cutoff_ID = ik_filter;
             Misc.OutPath = output_so;
             Misc.filename = trailname;
-            
+
+            if (time(1,2)-time(1,1))>0.18
             [Results,DatStore,Misc] = solveMuscleRedundancy(time,Misc);
+            else 
+                return
+            end 
             
             %merge results from static optimization and EMG-Constrained static optimization
             %------------------------------------------------------------------------------
             
+            if isfile(fullfile(output_so,[trailname '_StaticOptimization_force.sto']))
             so_file =  fullfile(output_so,[trailname '_StaticOptimization_force.sto']);
             so_file_out =  fullfile(output_so,[trailname '_StaticOptimization_force.sto']);
             [header, names, data, fpath] = SIMM_ReadMotion(so_file);
@@ -126,6 +131,7 @@ trailname = temp(1:end-18);
             q.data  = data;
             q.labels = names;
             
-            write_motionFile(q, so_file_out);            
+            write_motionFile(q, so_file_out);    
+            end 
           
         disp('DO done')
