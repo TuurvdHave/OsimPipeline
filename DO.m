@@ -96,7 +96,11 @@ trailname = temp(1:end-18);
             Misc.filename = trailname;
 
             if (time(1,2)-time(1,1))>0.18
-            [Results,DatStore,Misc] = solveMuscleRedundancy(time,Misc);
+                try
+                    [Results,DatStore,Misc] = solveMuscleRedundancy(time,Misc);
+                catch
+                    return
+                end 
             else 
                 return
             end 
