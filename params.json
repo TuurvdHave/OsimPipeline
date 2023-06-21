@@ -1,5 +1,5 @@
 { 
-    "osim_path": "/opensim_install/bin/",
+    "osim_path": "C/opensim_install/bin/",
 	"ks3x": "/KS_install_v2.1/",
 	"ks4x": "/KS-libraries-from-OpenSim4.0/KS-libraries/bin/",
     "ik_filter": 15,
