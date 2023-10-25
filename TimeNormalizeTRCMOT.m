@@ -35,8 +35,15 @@ end
 Firstanswer = inputdlg({'Based on ground reaction forces?','Based on marker data?','Manual crop? (based on timepoints)'...
     },'Time normalize trials',[1 35],{'Yes','No','No'});
 if strcmpi(Firstanswer{1,1},'yes')
-    Finalanswer = inputdlg({'Threshold begin in N?','Threshold end in N?'...
-        },'Based on ground reaction forces!',[1 35],{'50','50'});
+    answer = questdlg('Full gait cycle or half gail cycle?','gait cycle','Full','Half','Full');
+    switch answer
+        case 'Full'
+            Finalanswer = inputdlg({'Threshold begin in N?'...
+                },'Based on ground reaction forces!',[1 35],{'50'});
+        case 'Half'
+            Finalanswer = inputdlg({'Threshold begin in N?','Threshold end in N?'...
+                },'Based on ground reaction forces!',[1 35],{'50','50'});
+    end
 elseif strcmpi(Firstanswer{2,1},'yes')
     Finalanswer = inputdlg({'Which marker should to cropping be based on?','Velocity threshold in m/s'...
         },'Based on ground reaction forces!',[1 35],{'LANK','0.05'});
@@ -54,6 +61,7 @@ for subjectnr = 1 : size(subjectname,2)
     for nfile = 3 : size(filenames,1)
         %% analyzing marker data
         if strcmpi(filenames(nfile).name(end-3:end),'.trc')
+            if contains(filenames(nfile).name,'Static') == 0
             [TRC,labels] = importTRCdata(fullfile(filenames(nfile).folder,filenames(nfile).name));
             MOT = importdata(fullfile(filenames(nfile).folder,[filenames(nfile).name(1:end-4) '.mot']));
             [Markers,MLabels,VideoFrameRate,AnalogSignals,ALabels, AUnits, AnalogFrameRate,Event,ParameterGroup,CameraInfo]...
@@ -61,29 +69,48 @@ for subjectnr = 1 : size(subjectname,2)
             Frame = [ParameterGroup(1).Parameter(1).data(1,1)/VideoFrameRate ParameterGroup(1).Parameter(2).data(1,1)/VideoFrameRate];
             if strcmpi(Firstanswer{1,1},'yes')
                 for i = [2,8]
-                    side = MOT.colheaders{i}(4);
-                    % start for the left and right leg
-                    check = find(sqrt(MOT.data(:,i).^2+MOT.data(:,i+1).^2+MOT.data(:,i+3).^2)>str2num(Finalanswer{1,1}));
-                    con = diff(check);
-                    checkdiff = find(con>1);
-                    start = check(1,1);
-                    for ii = 1:size(checkdiff,1)
-                        start(ii+1) = check(checkdiff(ii)+1);
+                    if size(Finalanswer) == 2 % Half gaitcycle
+                        side = MOT.colheaders{i}(4);
+                        % start for the left and right leg
+                        check = find(sqrt(MOT.data(:,i).^2+MOT.data(:,i+1).^2+MOT.data(:,i+3).^2)>str2num(Finalanswer{1,1}));
+                        con = diff(check);
+                        checkdiff = find(con>1);
+                        start = check(1,1);
+                        for ii = 1:size(checkdiff,1)
+                            start(ii+1) = check(checkdiff(ii)+1);
+                        end
+                        clearvars check con checkdiff
+                        % stop for the left and right leg
+                        check = find(sqrt(MOT.data(:,i).^2+MOT.data(:,i+1).^2+MOT.data(:,i+3).^2)<str2num(Finalanswer{2,1}));
+                        con = diff(check);
+                        checkdiff = find(con>1);
+                        for ii = 1:size(checkdiff,1)
+                            stop(ii) = check(checkdiff(ii)+1);
+                        end
+                        clearvars check con checkdiff
+                    elseif size(Finalanswer) == 1 % full gaitcycle
+                        side = MOT.colheaders{i}(4);
+                        % start for the left and right leg
+                        check = find(sqrt(MOT.data(:,i).^2+MOT.data(:,i+1).^2+MOT.data(:,i+3).^2)>str2num(Finalanswer{1,1}));
+                        con = diff(check);
+                        checkdiff = find(con>1);
+                        start = check(1,1);
+                        for ii = 1:size(checkdiff,1)
+                            start(ii+1) = check(checkdiff(ii)+1);
+                            stop(ii) = check(checkdiff(ii)+1);
+                        end
+                        clearvars check con checkdiff
                     end
-                    clearvars check con checkdiff
-                    % stop for the left and right leg
-                    check = find(sqrt(MOT.data(:,i).^2+MOT.data(:,i+1).^2+MOT.data(:,i+3).^2)<str2num(Finalanswer{2,1}));
-                    con = diff(check);
-                    checkdiff = find(con>1);
-                    for ii = 1:size(checkdiff,1)
-                        stop(ii) = check(checkdiff(ii)+1);
-                    end
-                    clearvars check con checkdiff
                     maximum = min(size(start,2),size(stop,2));
-                    for ii = 1:size(maximum,2)
+                    for ii = 1:maximum
                         MOTdata = MOT.data(start(ii):stop(ii),:);
                         startTRC = find(TRC(:,2) == round(MOT.data(start(ii),1),2));
                         stopTRC = find(TRC(:,2) == round(MOT.data(stop(ii),1),2));
+
+
+%                         startTime(ii) = TRC(startTRC,1);
+%                         stopTime(ii) = TRC(stopTRC,1);
+                        
                         TRCdata = TRC(startTRC:stopTRC,:);
                         writeMarkersToTRC(fullfile(filenames(nfile).folder,[filenames(nfile).name(1:end-4) side num2str(ii) '.trc']),TRCdata(:,3:end),labels(3:end),VideoFrameRate,...
                             [TRCdata(1,1):TRCdata(end,1)]',TRCdata(:,2),'mm');
@@ -99,14 +126,19 @@ for subjectnr = 1 : size(subjectname,2)
                         elseif i == 8 && strcmpi(side,'l')
                             writeGRFsToMOT(MOTdata(:,2:4),MOTdata(:,8:10),MOTdata(:,5:7),MOTdata(:,11:13),MOTdata(:,15),MOTdata(:,18),AnalogFrameRate,...
                                 fullfile(filenames(nfile).folder,[filenames(nfile).name(1:end-4) side num2str(ii) '.mot']),MOTdata(:,1));
-                          end
+                        end
                     end
+%                    tafel = table(startTime',stopTime','VariableNames',{'startTime','stopTime'});
+%                    writetable(tafel,fullfile(filenames(nfile).folder,[filenames(nfile).name(1:end-4) '.csv']))
+                  clearvars startTRC stopTRC TRCdata stop start 
                 end
+                
             elseif strcmpi(Firstanswer{2,1},'yes')
             elseif strcmpi(Firstanswer{3,1},'yes')
             end
             delete(fullfile(filenames(nfile).folder,filenames(nfile).name))
             delete(fullfile(filenames(nfile).folder,[filenames(nfile).name(1:end-4) '.mot']))
-        end  
+            end
+        end 
     end
 end

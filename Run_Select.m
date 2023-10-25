@@ -18,7 +18,14 @@ mainpath = fullfile(tss{1:end-2});
 % Use uigetfile to allow the user to select the params.json file for specific inputs
 [file,path] = uigetfile('*.*','Select params.json file to define specific inputs');
 
-for x = 1:length(trcFilenames)
+tf = iscellstr(trcFilenames);
+if tf == 0
+    LengthFilenames = 1;
+else
+    LengthFilenames = length(trcFilenames);
+end
+
+for x = 1:LengthFilenames
     if iscell(trcFilenames)
         filename = char(trcFilenames(x));
     elseif isstr(trcFilenames)
