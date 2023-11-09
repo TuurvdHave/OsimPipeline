@@ -112,7 +112,7 @@ for subjectnr = 1 : size(subjectname,2)
                 MVNXtoSTO(fullfile(path,file),'squat.mvnx',subjectname(subjectnr),mainpath);
                 MVNXtoSTO(fullfile(path,file),'hipfront.mvnx',subjectname(subjectnr),mainpath);
                 IMU_Placer_GdR(fullfile(path,file),subjectname(subjectnr),mainpath);
-            elseif strcmpi(answer(3,1),'no') && ~exist(char(fullfile(mainpath,subjectname(subjectnr),[char(subjectname(subjectnr)) '_Scaled.osim'])))
+            elseif strcmpi(answer(3,1),'no')
                 MVNXtoSTO(fullfile(path,file),'Static.mvnx',subjectname(subjectnr),mainpath);
                 IMU_Placer(fullfile(path,file),subjectname(subjectnr),mainpath);
             end

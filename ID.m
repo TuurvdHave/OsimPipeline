@@ -60,26 +60,29 @@ if isfolder(fullfile(path_output,'SetUp_InverseKinematics'))
     %left leg
     ExternalLoads.ExternalLoads.objects.ExternalForce(2).data_source_name = strcat(SetupIK.InverseKinematicsTool.marker_file(1:end-4),'.mot');
 
+    %create external loads file
+    xml_write([dir_el,'\',[trailname '_ExternalLoads.xml']], ExternalLoads, 'OpenSimDocument');
+
 elseif isfolder(fullfile(path_output,'SetUp_IMU_InverseKinematics')) && isfile(fullfile(path_input,[trailname '.mot']))
     SetupIK = xml_read(fullfile(path_output,'SetUp_IMU_InverseKinematics',[trailname '.xml' ]));
     ExternalLoads = xml_read(strcat(Generic_files, '\ExternalLoads.xml'));
 
-    ExternalLoads.ExternalLoads.datafile = strcat(SetupIK.InverseKinematicsTool.marker_file(1:end-4),'.mot');
+    ExternalLoads.ExternalLoads.datafile = strcat(SetupIK.IMUInverseKinematicsTool.output_motion_file(1:end-4),'.mot');
     ExternalLoads.ExternalLoads.external_loads_model_kinematics_file = ' ';
 
     % right leg
-    ExternalLoads.ExternalLoads.objects.ExternalForce(1).data_source_name = strcat(SetupIK.InverseKinematicsTool.marker_file(1:end-4),'.mot');
-
+    ExternalLoads.ExternalLoads.objects.ExternalForce(1).data_source_name = strcat(SetupIK.IMUInverseKinematicsTool.output_motion_file(1:end-4),'.mot');
     %left leg
-    ExternalLoads.ExternalLoads.objects.ExternalForce(2).data_source_name = strcat(SetupIK.InverseKinematicsTool.marker_file(1:end-4),'.mot');
+    ExternalLoads.ExternalLoads.objects.ExternalForce(2).data_source_name = strcat(SetupIK.IMUInverseKinematicsTool.output_motion_file(1:end-4),'.mot');
+
+    %create external loads file
+    xml_write([dir_el,'\',[trailname '_ExternalLoads.xml']], ExternalLoads, 'OpenSimDocument');
 else
-    SetupIK = xml_read(fullfile(path_output,'SetUp_IMU_InverseKinematics',[trailname '.xml' ]));
-    ExternalLoads = xml_read(strcat(Generic_files, '\ExternalLoads.xml'));
+    
 end
 
 
-%create external loads file
-xml_write([dir_el,'\',[trailname '_ExternalLoads.xml']], ExternalLoads, 'OpenSimDocument');
+
 
 disp('external Loads file created')
 %% Inverse dynamics
@@ -132,6 +135,7 @@ else
     ID_setup.InverseDynamicsTool.lowpass_cutoff_frequency_for_coordinates = ik_filter;
     ID_setup.InverseDynamicsTool.results_directory = output_dyn;
     ID_setup.InverseDynamicsTool.output_gen_force_file  =  strcat(trailname,'.sto');
+    ID_setup.InverseDynamicsTool.external_loads_file = '';
 end
 
 

@@ -90,7 +90,7 @@ for x = 1:LengthFilenames
             end
         end
         %% Analyzing the IMU data
-    elseif strcmpi(filenames(nfile).name(end-4:end),'.mvnx')
+    elseif strcmpi(filename(end-4:end),'.mvnx')
         % Use inputdlg to get yes or no answers to questions about which analyses to run
         if ~exist('answer')
             answer = inputdlg({'Scaling? Answer with yes or no','Convert to STO?','Dynamic calibration?','IK?','ID?','SO?','DO?','JRF?','Save in .mat?'},'Analyses',[1 35],{'yes','yes','yes','no','no','no','no','no','no'});
@@ -101,33 +101,33 @@ for x = 1:LengthFilenames
             LinScaling(fullfile(path,file),subjectname,mainpath,height,weight);
         end
         if strcmpi(answer(2,1),'yes')
-            MVNXtoSTO(fullfile(path,file),filenames(nfile).name,subjectname,mainpath);
+            MVNXtoSTO(fullfile(path,file),filename,subjectname,mainpath);
         end
         if strcmpi(answer(3,1),'yes') && ~exist(char(fullfile(mainpath,subjectname,[char(subjectname) '_Scaled.osim'])))
             MVNXtoSTO(fullfile(path,file),'squat.mvnx',subjectname,mainpath);
             MVNXtoSTO(fullfile(path,file),'hipfront.mvnx',subjectname,mainpath);
             IMU_Placer_GdR(fullfile(path,file),subjectname,mainpath);
-        elseif strcmpi(answer(3,1),'no') && ~exist(char(fullfile(mainpath,subjectname,[char(subjectname) '_Scaled.osim'])))
+        elseif strcmpi(answer(3,1),'no') 
             MVNXtoSTO(fullfile(path,file),'Static.mvnx',subjectname,mainpath);
             IMU_Placer(fullfile(path,file),subjectname,mainpath);
         end
         if strcmpi(answer(4,1),'yes')
-            IMU_IK(fullfile(path,file),filenames(nfile).name,subjectname,mainpath);
+            IMU_IK(fullfile(path,file),filename,subjectname,mainpath);
         end
         if strcmpi(answer(5,1),'yes')
-            ID(fullfile(path,file),[filenames(nfile).name(1:end-5) '.mot'],subjectname,mainpath);
+            ID(fullfile(path,file),[filename(1:end-5) '.mot'],subjectname,mainpath);
         end
         if strcmpi(answer(6,1),'yes')
-            SO(fullfile(path,file),[filenames(nfile).name(1:end-5) '_ExternalLoads.xml'],subjectname,mainpath);
+            SO(fullfile(path,file),[filename(1:end-5) '_ExternalLoads.xml'],subjectname,mainpath);
         end
         if strcmpi(answer(7,1),'yes')
-            DO(fullfile(path,file),[filenames(nfile).name(1:end-5) '_ExternalLoads.xml'],subjectname,mainpath);
+            DO(fullfile(path,file),[filename(1:end-5) '_ExternalLoads.xml'],subjectname,mainpath);
         end
         if strcmpi(answer(8,1),'yes')
-            JRF(fullfile(path,file),[filenames(nfile).name(1:end-5) '_StaticOptimization_force.sto'],subjectname,mainpath);
+            JRF(fullfile(path,file),[filename(1:end-5) '_StaticOptimization_force.sto'],subjectname,mainpath);
         end
         if strcmpi(answer(9,1),'yes')
-            Summarize(fullfile(path,file),[filenames(nfile).name(1:end-5) '_JointReaction_ReactionLoads.sto'],subjectname,mainpath);
+            Summarize(fullfile(path,file),[filename(1:end-5) '_JointReaction_ReactionLoads.sto'],subjectname,mainpath);
         end
 
     end % if .trc
