@@ -63,24 +63,20 @@ if isfolder(fullfile(path_output,'SetUp_InverseKinematics'))
     %create external loads file
     xml_write([dir_el,'\',[trailname '_ExternalLoads.xml']], ExternalLoads, 'OpenSimDocument');
 
-elseif isfolder(fullfile(path_output,'SetUp_IMU_InverseKinematics')) && isfile(fullfile(path_input,[trailname '.mot']))
-    SetupIK = xml_read(fullfile(path_output,'SetUp_IMU_InverseKinematics',[trailname '.xml' ]));
+elseif isfolder(fullfile(path_output,'SetUp_IMU_InverseKinematics')) && isfile(fullfile(path_input,[trailname '.mot'])) 
     ExternalLoads = xml_read(strcat(Generic_files, '\ExternalLoads.xml'));
 
-    ExternalLoads.ExternalLoads.datafile = strcat(SetupIK.IMUInverseKinematicsTool.output_motion_file(1:end-4),'.mot');
+    ExternalLoads.ExternalLoads.datafile = strcat(fullfile(path_input,[trailname '.mot']));
     ExternalLoads.ExternalLoads.external_loads_model_kinematics_file = ' ';
 
     % right leg
-    ExternalLoads.ExternalLoads.objects.ExternalForce(1).data_source_name = strcat(SetupIK.IMUInverseKinematicsTool.output_motion_file(1:end-4),'.mot');
+    ExternalLoads.ExternalLoads.objects.ExternalForce(1).data_source_name = strcat(fullfile(path_input,[trailname '.mot']));;
     %left leg
-    ExternalLoads.ExternalLoads.objects.ExternalForce(2).data_source_name = strcat(SetupIK.IMUInverseKinematicsTool.output_motion_file(1:end-4),'.mot');
+    ExternalLoads.ExternalLoads.objects.ExternalForce(2).data_source_name = strcat(fullfile(path_input,[trailname '.mot']));;
 
     %create external loads file
     xml_write([dir_el,'\',[trailname '_ExternalLoads.xml']], ExternalLoads, 'OpenSimDocument');
-else
-    
-end
-
+end 
 
 
 
@@ -115,7 +111,7 @@ if isfolder(fullfile(path_output,'SetUp_InverseKinematics'))
     ID_setup.InverseDynamicsTool.output_gen_force_file  =  strcat(trailname,'.sto');
     ID_setup.InverseDynamicsTool.external_loads_file = (char(fullfile(dir_el,[trailname  '_ExternalLoads.xml'])));
 
-elseif isfolder(fullfile(path_output,'SetUp_IMU_InverseKinematics')) && isfile(fullfile(path_input,[trailname '.mot']))
+elseif isfolder(fullfile(path_output,'SetUp_IMU_InverseKinematics')) && isfile(fullfile(path_input,[trailname '.mot'])) && isfile(fullfile(path_output,'SetUp_IMU_InverseKinematics',[trailname '.xml' ]))
     SetupIK = xml_read(fullfile(path_output,'SetUp_IMU_InverseKinematics',[trailname '.xml' ]));
     ID_setup = xml_read(strcat(Generic_files, '\ID_Generic.xml'));
     ID_setup.InverseDynamicsTool.model_file = [model_in];
@@ -127,10 +123,11 @@ elseif isfolder(fullfile(path_output,'SetUp_IMU_InverseKinematics')) && isfile(f
     ID_setup.InverseDynamicsTool.external_loads_file = (char(fullfile(dir_el,[trailname  '_ExternalLoads.xml'])));
 
 else
-    SetupIK = xml_read(fullfile(path_output,'SetUp_IMU_InverseKinematics',[trailname '.xml' ]));
+    ikdata = importdata(fullfile(path_output,'InverseKinematics', [trailname '.mot']));
+    time = size(ikdata.data,1)/VideoFrameRate;
     ID_setup = xml_read(strcat(Generic_files, '\ID_Generic.xml'));
     ID_setup.InverseDynamicsTool.model_file = [model_in];
-    ID_setup.InverseDynamicsTool.time_range = [string(SetupIK.IMUInverseKinematicsTool.time_range(1,1)) ' ' string(SetupIK.IMUInverseKinematicsTool.time_range(1,2))];
+    ID_setup.InverseDynamicsTool.time_range = ['0 ' string(time)];
     ID_setup.InverseDynamicsTool.coordinates_file = fullfile(path_output,'InverseKinematics', [trailname '.mot']);
     ID_setup.InverseDynamicsTool.lowpass_cutoff_frequency_for_coordinates = ik_filter;
     ID_setup.InverseDynamicsTool.results_directory = output_dyn;
