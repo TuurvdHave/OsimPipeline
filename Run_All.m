@@ -21,7 +21,7 @@ a = 1;
 % Loop through all the folders in the project folder
 for i = 3 : size(folders,1)
     % Check if the folder is named "GenericSetup"
-    if strcmpi(folders(i).name,'GenericSetup') == 0
+    if strcmpi(folders(i).name,'GenericSetup') == 0 && strcmpi(folders(i).name,'params.json') == 0 
         % If it's not, add the folder name to a cell array called "subjectname"
         subjectname{a} = folders(i).name;
         % Increment the counter
@@ -32,29 +32,45 @@ end
 % Use uigetfile to allow the user to select the params.json file for specific inputs
 [file,path] = uigetfile('*.*','Select params.json file to define specific inputs');
 
+% answering which steps of the pipeline to run. This is not performed
+% automatically as the codes wants to run parallell computations
+MoInanswer = inputdlg({'Are you analyzing Mocap or Incap data'},'Analyses',[1 35],{'Mocap/Incap'});
+if strcmpi(MoInanswer{1},'Mocap')
+    answer = inputdlg({'IK? Answer with yes or no','KS?','ID?','SO?','DO?','JRF?','Save in .mat?'},'Analyses',[1 35],{'yes','no','yes','yes','no','yes','yes'});
+elseif strcmpi(MoInanswer{1},'Incap')
+    answer = inputdlg({'Scaling? Answer with yes or no','Convert to STO?','Dynamic calibration?','IK?','ID?','SO?','DO?','JRF?','Save in .mat?'},'Analyses',[1 35],{'yes','yes','yes','no','no','no','no','no','no'});
+end
+
+for subjectnr = 1 : size(subjectname,2)
+    if strcmpi(MoInanswer{1},'Incap') && strcmpi(answer(1,1),'yes') && ~exist(char(fullfile(mainpath,subjectname(subjectnr),[char(subjectname(subjectnr)) '.osim'])))
+        height(subjectnr) = str2double(inputdlg(['Type the height of ' subjectname(subjectnr)  ' (cm):']));
+        weight(subjectnr) = str2double(inputdlg(['Type the weight of ' subjectname(subjectnr) ' (kg):']));
+    end
+end 
 %% Running the analysis
 for subjectnr = 1 : size(subjectname,2)
     filenames = dir(char(fullfile(mainpath,subjectname(subjectnr))));
-    a = 3;
-    for nfile = 3 : size(filenames,1)
+    parpool(3)
+    parfor nfile = 3 : size(filenames,1)
         %% analyzing marker data
-        if strcmpi(filenames(nfile).name(end-3:end),'.trc')
+        if strcmpi(filenames(nfile).name(end-3:end),'.trc') && strcmpi(MoInanswer{1},'Mocap')
             % Use inputdlg to get yes or no answers to questions about which analyses to run
-            if ~exist('answer')
-                answer = inputdlg({'IK? Answer with yes or no','KS?','ID?','SO?','DO?','JRF?','Save in .mat?'},'Analyses',[1 35],{'yes','no','yes','yes','no','yes','yes'});
-            end
             if strcmpi(answer(1,1),'yes')
                 IK(fullfile(path,file),filenames(nfile).name,subjectname(subjectnr),mainpath);
             end
             if strcmpi(answer(2,1),'yes')
                 KS(fullfile(path,file),filenames(nfile).name,subjectname(subjectnr),mainpath);
             end
-            % when events files are used the name of output kinematicfiles
+            % when events are used in vicon one .trc can result in multiple .mot files.
+            % the name of output kinematicfiles
             % will be changed according to the event. The final name is
-            % checked here
-            kinfilenames = dir(char(fullfile(mainpath,subjectname(subjectnr),'OpenSim\InverseKinematics')));
-            if strcmpi(filenames(nfile).name(1:end-4),kinfilenames(a).name(1:end-4)) % if no events are detected
-                finfilename = filenames(nfile).name(1:end-4);
+            % checked here. 
+            kinfile = dir(char(fullfile(mainpath,subjectname(subjectnr),'OpenSim\InverseKinematics')));
+            kinfilenames = {kinfile(~[kinfile.isdir]).name};
+            for f = 1 : sum(contains(kinfilenames,filenames(nfile).name(1:end-4)))
+                [row,col] = find(contains(kinfilenames,filenames(nfile).name(1:end-4)));
+                sub = char(kinfilenames(:,col(f)));
+                finfilename = sub(1:end-4);
                 if strcmpi(answer(3,1),'yes')
                     ID(fullfile(path,file),[finfilename '.mot'],subjectname(subjectnr),mainpath);
                 end
@@ -70,40 +86,13 @@ for subjectnr = 1 : size(subjectname,2)
                 if strcmpi(answer(7,1),'yes')
                     Summarize(fullfile(path,file),[finfilename '_JointReaction_ReactionLoads.sto'],subjectname(subjectnr),mainpath);
                 end
-                a = a + 1;
-            else
-                for ii = a : size(kinfilenames,1)
-                    if not(strcmpi(kinfilenames(a).name(end-3:end),'.sto'))
-                        finfilename = kinfilenames(a).name(1:end-4);
-                        if strcmpi(answer(3,1),'yes')
-                            ID(fullfile(path,file),[finfilename '.mot'],subjectname(subjectnr),mainpath);
-                        end
-                        if strcmpi(answer(4,1),'yes')
-                            SO(fullfile(path,file),[finfilename '_ExternalLoads.xml'],subjectname(subjectnr),mainpath);
-                        end
-                        if strcmpi(answer(5,1),'yes')
-                            DO(fullfile(path,file),[finfilename '_ExternalLoads.xml'],subjectname(subjectnr),mainpath);
-                        end
-                        if strcmpi(answer(6,1),'yes')
-                            JRF(fullfile(path,file),[finfilename '_StaticOptimization_force.sto'],subjectname(subjectnr),mainpath);
-                        end
-                        if strcmpi(answer(7,1),'yes')
-                            Summarize(fullfile(path,file),[finfilename '_JointReaction_ReactionLoads.sto'],subjectname(subjectnr),mainpath);
-                        end
-                        a = a +1;
-                    end
-                end
+
             end
             %% Analyzing the IMU data
-        elseif strcmpi(filenames(nfile).name(end-4:end),'.mvnx')
+        elseif strcmpi(filenames(nfile).name(end-4:end),'.mvnx') && strcmpi(MoInanswer{1},'Incap')
             % Use inputdlg to get yes or no answers to questions about which analyses to run
-            if ~exist('answer')
-                answer = inputdlg({'Scaling? Answer with yes or no','Convert to STO?','Dynamic calibration?','IK?','ID?','SO?','DO?','JRF?','Save in .mat?'},'Analyses',[1 35],{'yes','yes','yes','no','no','no','no','no','no'});
-            end
             if strcmpi(answer(1,1),'yes') && ~exist(char(fullfile(mainpath,subjectname(subjectnr),[char(subjectname(subjectnr)) '.osim'])))
-                height = str2double(inputdlg('Type the height of the participant (cm):'));
-                weight = str2double(inputdlg('Type the weight of the participant (kg):'));
-                LinScaling(fullfile(path,file),subjectname(subjectnr),mainpath,height,weight);
+                LinScaling(fullfile(path,file),subjectname(subjectnr),mainpath,height(subjectnr),weight(subjectnr));
             end
             if strcmpi(answer(2,1),'yes')
                 MVNXtoSTO(fullfile(path,file),filenames(nfile).name,subjectname(subjectnr),mainpath);
@@ -134,7 +123,8 @@ for subjectnr = 1 : size(subjectname,2)
             if strcmpi(answer(9,1),'yes')
                 Summarize(fullfile(path,file),[filenames(nfile).name(1:end-5) '_JointReaction_ReactionLoads.sto'],subjectname(subjectnr),mainpath);
             end
-
         end % if .trc
     end % for nfiles
+    delete(gcp('nocreate'))
 end % for subjectnr
+
