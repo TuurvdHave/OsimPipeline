@@ -1,6 +1,6 @@
 # OsimPipeline
 
-These codes are developed to batch process all your data in OpenSim and convert the output files into a .mat structure that can be used in the plotting/reporting app (patientdisplay).<br>
+These codes are developed to batch process in parallell all your data in OpenSim and convert the output files into a .mat structure that can be used in the plotting/reporting app (patientdisplay).<br>
 ! The codes assume a very specific structure on how the data is stored !<br>
 This code can handle both, .trc and .mot-files but also .MVNX files (output files when measuring with the Xsens). Data should be structured similarly as described. <br>
 # steps to do: 
@@ -39,4 +39,4 @@ The names of the reserve actuators are the DoF names without _reserve (in common
 
 !important to know! 
 All paths should not contain any spaces as this will make the files unreadable for the computer
- 
+Three trails are simultaneously analyzed at the same time. You can modify this by adjusting the number within the parpool() function, located at line 43 in the run_select.m file and line 53 in the run_all file.
