@@ -34,15 +34,19 @@ elseif strcmpi(MoInanswer{1},'Incap')
     answer = inputdlg({'Scaling? Answer with yes or no','Convert to STO?','Dynamic calibration?','IK?','ID?','SO?','DO?','JRF?','Save in .mat?'},'Analyses',[1 35],{'yes','yes','yes','no','no','no','no','no','no'});
 end
 
-    if strcmpi(MoInanswer{1},'Incap') && strcmpi(answer(1,1),'yes') && ~exist(char(fullfile(mainpath,subjectname,[char(subjectname) '.osim'])))
-        height(subjectnr) = str2double(inputdlg(['Type the height of ' subjectname  ' (cm):']));
-        weight(subjectnr) = str2double(inputdlg(['Type the weight of ' subjectname ' (kg):']));
+    if strcmpi(MoInanswer{1},'Incap') && strcmpi(answer(1,1),'yes') 
+        height = str2double(inputdlg(['Type the height of ' subjectname  ' (cm):']));
+        weight = str2double(inputdlg(['Type the weight of ' subjectname ' (kg):']));
     end
 
 
-parpool(3)
-parfor x = 1:LengthFilenames
-    filename = char(trcFilenames(x));
+parpool(2)
+parfor x = 1:LengthFilenames 
+    if tf == 0 
+        filename = trcFilenames;
+    else
+        filename = char(trcFilenames(x));
+    end 
     %% analyzing marker data
     if strcmpi(filename(end-3:end),'.trc') && strcmpi(MoInanswer{1},'Mocap')
         % Use inputdlg to get yes or no answers to questions about which analyses to run
@@ -82,18 +86,18 @@ parfor x = 1:LengthFilenames
         %% Analyzing the IMU data
     elseif strcmpi(filename(end-4:end),'.mvnx') && strcmpi(MoInanswer{1},'Incap')
         % Use inputdlg to get yes or no answers to questions about which analyses to run
-        if strcmpi(answer(1,1),'yes') && ~exist(char(fullfile(mainpath,subjectname,[char(subjectname) '.osim'])))
-            LinScaling(fullfile(path,file),subjectname,mainpath,height(subjectnr),weight(subjectnr));
+        if strcmpi(answer(1,1),'yes') 
+            LinScaling(fullfile(path,file),subjectname,mainpath,height,weight);
         end
         if strcmpi(answer(2,1),'yes')
             MVNXtoSTO(fullfile(path,file),filename,subjectname,mainpath);
         end
-        if strcmpi(answer(3,1),'yes') && ~exist(char(fullfile(mainpath,subjectname,[char(subjectname) '_Scaled.osim'])))
+        if strcmpi(answer(3,1),'yes') 
             MVNXtoSTO(fullfile(path,file),'squat.mvnx',subjectname,mainpath);
             MVNXtoSTO(fullfile(path,file),'hipfront.mvnx',subjectname,mainpath);
             IMU_Placer_GdR(fullfile(path,file),subjectname,mainpath);
         elseif strcmpi(answer(3,1),'no')
-            MVNXtoSTO(fullfile(path,file),'Static.mvnx',subjectname,mainpath);
+%             MVNXtoSTO(fullfile(path,file),'Static.mvnx',subjectname,mainpath);
             IMU_Placer(fullfile(path,file),subjectname,mainpath);
         end
         if strcmpi(answer(4,1),'yes')
