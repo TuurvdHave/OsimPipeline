@@ -149,24 +149,22 @@ trailname = temp(1:end-18);
             
             for m = 1:size(DatStore.MuscleNames,2);
                 ind = find(strcmp(DatStore.MuscleNames{m},names));
-                data(startind:endind,ind) =  interp1(Results.Time.genericMRS,Results.TForce.genericMRS(m,:)',data(startind:endind,1));
+                data(startind:endind,ind) =  interp1(Results.Time.genericMRS,Results.MActivation.genericMRS(m,:)',data(startind:endind,1));
             end
             
             
             if size(Results.MActivation.genericMRS,2)< size(Results.Time.genericMRS,1);
-                %                 missing = size(data,1)-size(Results.RActivation.genericMRS,2);
                 missing = length(Results.Time.genericMRS)-size(Results.MActivation.genericMRS,2);
                 Results.MActivation.genericMRS = [Results.MActivation.genericMRS,ones(size(Results.MActivation.genericMRS,1),missing).*NaN];
             end
             for m =  1:size(Misc.DofNames_Input{1,1},2)
-                ind =find(strcmp(Misc.DofNames_Input{1,1}{m},names));%'_reserve'
-                %             data(1:endind,ind) = Results.RActivation.genericMRS(m,:)';
+                ind = find(strcmp([Misc.DofNames_Input{1,1}{m}, '_reserve'],names));%'
                 data(startind:endind,ind) = interp1(Results.Time.genericMRS,Results.MActivation.genericMRS(m,:)',data(startind:endind,1));
             end
             q.data  = data;
             q.labels = names;
             
             write_motionFile(q, so_file_out);    
-            end 
+            end
           
         disp('DO done')
